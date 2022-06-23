@@ -1,0 +1,17 @@
+{
+    "extends": "@tsconfig/recommended/tsconfig.json",
+    "ts-node": {
+      "compilerOptions": {
+        "module": "es6"
+      }
+    },
+    "compilerOptions": {
+      "declaration": true,
+      "moduleResolution": "node",
+      "module": "commonJs",
+      "outDir": "build",
+
+    },
+    "include": ["src/*"],
+    "exclude": ["node_modules"],
+  }

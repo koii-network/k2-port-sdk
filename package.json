@@ -1,0 +1,46 @@
+{
+  "name": "ipfss",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build:dev": "tsc-watch --noClear -p ./tsconfig.json",
+    "run:dev": "node build/index.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@types/jsonfile": "^6.1.0",
+    "@types/node-fetch": "^2.6.1",
+    "arweave": "^1.10.23",
+    "body-parser": "^1.20.0",
+    "bs58": "^5.0.0",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "express-fileupload": "^1.4.0",
+    "ipfs": "^0.62.3",
+    "ipfs-http-client": "^56.0.3",
+    "node-fetch": "2",
+    "smartweave": "^0.4.48",
+    "tsc": "^2.0.4"
+  },
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.1",
+    "@types/eslint": "^7.2.4",
+    "@types/eslint-plugin-prettier": "^3.1.0",
+    "@types/mz": "^2.7.2",
+    "@types/node": "~16.11.6",
+    "@types/prettier": "^2.1.5",
+    "@types/prompts": "^2.0.14",
+    "@types/yaml": "^1.9.7",
+    "@typescript-eslint/eslint-plugin": "^5.27.0",
+    "@typescript-eslint/parser": "^5.27.0",
+    "eslint": "^7.12.1",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.1.2",
+    "start-server-and-test": "^1.11.6",
+    "ts-node": "^10.0.0",
+    "tsc-watch": "^5.0.3",
+    "typescript": "^4.0.5"
+  }
+}
