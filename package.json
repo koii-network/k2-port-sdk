@@ -21,7 +21,8 @@
     "ipfs-http-client": "^56.0.3",
     "node-fetch": "2",
     "smartweave": "^0.4.48",
-    "tsc": "^2.0.4"
+    "tsc": "^2.0.4",
+    "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
     "@tsconfig/recommended": "^1.0.1",
