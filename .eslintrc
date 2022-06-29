@@ -3,6 +3,7 @@
       "eslint:recommended",
       "plugin:@typescript-eslint/recommended"
     ],
+    "ignorePatterns": ["gulpfile.js", "gulp/**/*", "webpack.config.js"],
     "parser": "@typescript-eslint/parser",
     "plugins": ["@typescript-eslint"],
     "rules": {
