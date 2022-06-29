@@ -1,8 +1,6 @@
 import fetch from "node-fetch";
 import { InitParams, NodeInterface, PoRTData } from "./types";
-import crypto from "crypto";
-import { BoxKeyPair } from "tweetnacl";
-import nacl from "tweetnacl";
+import nacl,{BoxKeyPair} from "tweetnacl";
 import bs58 from "bs58";
 import { sha256 } from "js-sha256";
 
