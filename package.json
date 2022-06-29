@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "build:dev": "tsc-watch --noClear -p ./tsconfig.json",
-    "run:dev": "node build/index.js"
+    "run:dev": "node build/index.js",
+    "build":"rimraf build"
   },
   "license": "MIT",
   "dependencies": {
@@ -17,8 +18,10 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "express-fileupload": "^1.4.0",
+    "install": "^0.13.0",
     "ipfs": "^0.62.3",
     "ipfs-http-client": "^56.0.3",
+    "js-sha256": "^0.9.0",
     "node-fetch": "2",
     "smartweave": "^0.4.48",
     "tsc": "^2.0.4",
@@ -35,10 +38,12 @@
     "@types/yaml": "^1.9.7",
     "@typescript-eslint/eslint-plugin": "^5.27.0",
     "@typescript-eslint/parser": "^5.27.0",
+    "cpy-cli": "^4.1.0",
     "eslint": "^7.12.1",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-prettier": "^4.0.0",
     "prettier": "^2.1.2",
+    "rimraf": "^3.0.2",
     "start-server-and-test": "^1.11.6",
     "ts-node": "^10.0.0",
     "tsc-watch": "^5.0.3",

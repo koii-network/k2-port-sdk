@@ -1,11 +1,10 @@
 import fetch from "node-fetch";
-import { PoRTInterface, InitParams, NodeInterface } from "./types";
+import { InitParams, NodeInterface, PoRTData } from "./types";
 import crypto from "crypto";
-import { SignKeyPair, sign } from "tweetnacl";
+import { BoxKeyPair } from "tweetnacl";
 import nacl from "tweetnacl";
 import bs58 from "bs58";
-import fs from "fs";
-import { inspect } from "util";
+import { sha256 } from "js-sha256";
 
 /**
     @description This class is used to generate and submit Port data to the Port API.
@@ -91,56 +90,70 @@ export class PoRT {
         });
     });
   }
-  private async getHeaders(trxId: string) {
-    let headers = [];
-    if (window.koiiWallet) {
+  async signPort(trxId: string) {
+    let Ports: PoRTData;
+    if (window && window.koiiWallet.signK2Port) {
+      //TODO: Change this when we have ports are implemented in finnie
       const response = await window.koiiWallet.signPort(trxId);
-      headers = response.data;
+      Ports = response.data;
       console.log(`%c ${JSON.stringify(response)}`, "color: green");
       if (response.status == 200) return response.data;
     }
-    if (
-      localStorage.getItem(this.walletLocation) ||
-      localStorage.getItem("portWallet")
-    ) {
-      const wallet: Uint8Array | null = JSON.parse(
-        localStorage.getItem(this.walletLocation) as string
+    if (localStorage.getItem(this.walletLocation)) {
+      const wallet: BoxKeyPair = nacl.sign.keyPair.fromSecretKey(
+        new Uint8Array(
+          //eslint-disable-next-line
+          JSON.parse(localStorage.getItem(this.walletLocation) as any)
+        )
       );
-      headers = await this.generatePoRTHeaders(wallet, trxId);
-      return headers;
+      Ports = await this.generatePoRTHeaders(wallet, trxId);
+      return Ports;
     } else {
       try {
-        let wallet = await arweave.wallets.generate();
-        localStorage.setItem("portWallet", JSON.stringify(wallet));
-        headers = await this.#generatePoRTHeaders(wallet, trxId);
-        return headers;
+        const wallet: BoxKeyPair = nacl.box.keyPair();
+        localStorage.setItem("portWallet", JSON.stringify(wallet.secretKey));
+        Ports = await this.generatePoRTHeaders(wallet, trxId);
+        return Ports;
       } catch (e) {
         console.log(e);
       }
     }
   }
-  private async generatePoRTHeaders(walletKeys, payload) {
-    console.log("In header generation");
-    // eslint-disable-next-line no-unused-vars
-    const wallet = await koi.loadWallet(walletKeys);
-    // console.log(walletKeys)
-    //eslint-disable-next-line no-unused-vars
-    const address = await koi.getWalletAddress();
-    console.log(address);
-    let headers = {};
+  private async generatePoRTHeaders(
+    wallet: BoxKeyPair,
+    contentId: string
+  ): Promise<PoRTData> {
     try {
-      let signPayload = await this.#proofOfWork({
-        data: {
-          payload,
-          timeStamp: Math.floor(+new Date() / 1000),
-        },
-      });
-      headers["x-request-signature"] = JSON.stringify({
-        data: signPayload["data"],
-        signature: signPayload["signature"],
-      });
-      headers["request-public-key"] = signPayload.owner;
-      return headers;
+      console.log("In header generation");
+      let nonce = 0;
+      // TODO: change epoch:-1 to current epoch
+      const payload = {
+        resource: contentId,
+        timestamp: new Date().valueOf(),
+        nonce,
+        scheme: "AR",
+        epoch: -1,
+      };
+      let signedMessage: Uint8Array = new Uint8Array();
+      for (;;) {
+        const msg: Uint8Array = new TextEncoder().encode(
+          JSON.stringify(payload)
+        );
+        payload.nonce++;
+        signedMessage = nacl.sign(msg, wallet.secretKey);
+        const hash = sha256(signedMessage);
+        // console.log(hash);
+        if (this.difficultyFunction(hash)) {
+          console.log(hash);
+          break;
+        }
+        nonce++;
+      }
+      const data = {
+        signedMessage: encodePublicKey(signedMessage),
+        publicKey: encodePublicKey(wallet.publicKey),
+      };
+      return data;
     } catch (e) {
       console.log(e);
       throw {
@@ -149,74 +162,9 @@ export class PoRT {
       };
     }
   }
-  async #proofOfWork(payload) {
-    let nonce = 0;
-    const loopCondition = true;
-    let signedPayload = {};
-    while (loopCondition) {
-      payload.data.nonce = nonce;
-      signedPayload = await koi.signPayload(payload);
-      const  e = crypto
-        .createHash("sha256")
-        .update(JSON.stringify(signedPayload.signature))
-        .digest("hex");
-      if (this.difficultyFunction(e)) {
-        console.log(e);
-        break;
-      }
-      nonce++;
-    }
-    return signedPayload;
-  }
-  difficultyFunction(hash) {
-    return hash.startsWith("00") || hash.startsWith("01");
-  }
-  async signPayload(resourceId, Wallet) {
-    let nonce = 0;
-    // TODO: change epoch:-1 to current epoch
-    const payload = {
-      resource: resourceId,
-      timestamp: new Date().valueOf(),
-      nonce,
-      scheme: "AR",
-      epoch: -1,
-    };
-    let signedMessage: Uint8Array = new Uint8Array();
-    let data = {};
-    // eslint-disable-next-line
-    while (true) {
-      const msg= new TextEncoder().encode(JSON.stringify(payload));
-      payload.nonce++;
-      signedMessage = nacl.sign(msg, secretKey);
-      const hash = crypto
-        .createHash("sha256")
-        .update(encodePublicKey(signedMessage))
-        .digest("hex");
-      // console.log(hash);
-      if (hash.startsWith("00")) {
-        console.log(hash);
-        break;
-      }
-      nonce++;
-    }
-    data = {
-      signedMessage: encodePublicKey(signedMessage),
-      publicKey: encodePublicKey(publicKey),
-    };
-    // const hash = crypto.createHash("sha256").update(pwd).digest("base64");
 
-    console.log(encodePublicKey(signedMessage));
-    // console.log(decodePublicKey(encodePublicKey(signedMessage)))
-    jsonfile.writeFileSync("./ports.json", data);
-    fetch("http://localhost:8887/attention/submit-ports", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Done");
-      });
+  difficultyFunction(hash: string) {
+    return hash.startsWith("00") || hash.startsWith("01");
   }
 }
 

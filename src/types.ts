@@ -30,3 +30,7 @@ export interface NodeDataInterface {
   url: string;
   timestamp: number;
 }
+export interface PoRTData{
+  signedMessage?:string;
+  publicKey?:string
+}
