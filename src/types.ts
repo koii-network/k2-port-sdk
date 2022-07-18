@@ -11,14 +11,14 @@ export interface PoRTInterface {
   connectionWait: boolean;
 }
 export interface InitParams {
-  trustedNodeAddress: string;
-  node: number;
-  namespaceId: string;
-  nodes: Array<string>;
-  walletLocation: string;
-  ignoreRejection: boolean;
-  connectionWait: boolean;
-  propagationCount: number;
+  trustedNodeAddress?: string;
+  node?: number;
+  namespaceId?: string;
+  nodes?: Array<string>;
+  walletLocation?: string;
+  ignoreRejection?: boolean;
+  connectionWait?: boolean;
+  propagationCount?: number;
 }
 
 export interface NodeInterface {

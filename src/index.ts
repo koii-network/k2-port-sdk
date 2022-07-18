@@ -30,7 +30,7 @@ export class PoRT {
   connectionWait: boolean;
   initialized: Promise<void>;
 
-  constructor(initParams: InitParams) {
+  constructor(initParams: InitParams={}) {
     this.trustedNodeAddress =
       initParams.trustedNodeAddress || "https://mainnet.koii.live";
     this.propagationCount = initParams.propagationCount || 3;
@@ -88,6 +88,7 @@ export class PoRT {
     });
   }
   async signPort(trxId: string) {
+    await this.initialized;
     let Ports: PoRTData;
     if (window && window.koiiWallet.signK2Port) {
       //TODO: Change this when we have ports are implemented in finnie
