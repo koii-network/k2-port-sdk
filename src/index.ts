@@ -1,7 +1,8 @@
 import { InitParams, NodeInterface, PoRTData } from "./types";
-import nacl,{BoxKeyPair} from "tweetnacl";
+import nacl, { BoxKeyPair } from "tweetnacl";
 import bs58 from "bs58";
 import { sha256 } from "js-sha256";
+import { ChunkGraph } from "webpack";
 
 /**
     @description This class is used to generate and submit Port data to the Port API.
@@ -30,7 +31,7 @@ export class PoRT {
   connectionWait: boolean;
   initialized: Promise<void>;
 
-  constructor(initParams: InitParams={}) {
+  constructor(initParams: InitParams = {}) {
     this.trustedNodeAddress =
       initParams.trustedNodeAddress || "https://mainnet.koii.live";
     this.propagationCount = initParams.propagationCount || 3;
@@ -43,6 +44,7 @@ export class PoRT {
   async initialize() {
     await this.getListOfAllNodes();
   }
+
   private async getListOfAllNodes() {
     fetch(this.trustedNodeAddress + "/nodes")
       .then((res) => res.json())
@@ -64,6 +66,54 @@ export class PoRT {
    * @param {Array} nodes - List of nodes to check for attention game
    * @returns {Array} - List of nodes running attention game.
    */
+  /**
+   *
+   * @description This function submits PoRT to KOII network for given transaction ID
+   * @param {Array} trxId - Transaction Id for which tom send PoRT of.
+   */
+  async propagatePoRT(trxId) {
+    await this.initialize;
+    // if (!this.trxRegex.test(trxId))
+    //   return {
+    //     status: 400,
+    //     message: 'Invalid TransactionId',
+    //   };
+    // if (this.connectionWait)
+    //   try {
+    //     await this.#listenForPermissions();
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
+    // try {
+    //   await this.#checkReadyState();
+    // } catch (e) {
+    //   return { status: 401, message: 'Koi-PoRT failed to initialize' };
+    // }
+    let headers = {};
+    // headers['x-request-signature'] = JSON.parse(headers['x-request-signature']);
+    try {
+      headers = await this.signPort(trxId);
+    } catch (e) {
+      headers = {};
+    }
+    if (headers) {
+      for (let i = 0; i < this.nodes.length; i++) {
+        console.log(this.nodes[i] + "/submit-port");
+        fetch(this.nodes[i] + `/attention/submit-port`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(headers),
+        })
+          .then((res) => res.json())
+          .then(console.log)
+          .catch(console.log);
+
+        // console.log(headers);
+      }
+    }
+  }
   private async getNodesRunningAttentionGame(nodes: Array<NodeInterface>) {
     const nodesRunningAttentionGame: Array<string> = [];
     for (let i = 0; i < nodes.length; i++) {
@@ -90,7 +140,7 @@ export class PoRT {
   async signPort(trxId: string) {
     await this.initialized;
     let Ports: PoRTData;
-    if (window && window.koiiWallet.signK2Port) {
+    if (window && window.koiiWallet && window.koiiWallet.signK2Port) {
       //TODO: Change this when we have ports are implemented in finnie
       const response = await window.koiiWallet.signPort(trxId);
       Ports = response.data;
@@ -110,6 +160,7 @@ export class PoRT {
       try {
         const wallet: BoxKeyPair = nacl.box.keyPair();
         localStorage.setItem("portWallet", JSON.stringify(wallet.secretKey));
+        console.log("portWallet", JSON.stringify(wallet.secretKey));
         Ports = await this.generatePoRTHeaders(wallet, trxId);
         return Ports;
       } catch (e) {
