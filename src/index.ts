@@ -33,31 +33,37 @@ export class PoRT {
 
   constructor(initParams: InitParams = {}) {
     this.trustedNodeAddress =
-      initParams.trustedNodeAddress || "https://mainnet.koii.live";
+      initParams.trustedNodeAddress || "https://k2-task-testnet.koii.live/";
+    console.log(this);
     this.propagationCount = initParams.propagationCount || 3;
     this.namespaceId = initParams.namespaceId || "Attention";
     this.walletLocation = initParams.walletLocation || "k2-wallet";
     this.ignoreRejection = initParams.ignoreRejection || false;
     this.connectionWait = initParams.connectionWait || false;
     this.initialized = this.initialize();
+    // console.log(this.initialized);
+    this.nodes = [];
   }
-  async initialize() {
-    await this.getListOfAllNodes();
+  initialize() {
+    return this.getListOfAllNodes();
   }
 
-  private async getListOfAllNodes() {
-    fetch(this.trustedNodeAddress + "/nodes")
-      .then((res) => res.json())
-      .then(async (res) => {
-        console.log(res);
-        const validNodes = await this.getNodesRunningAttentionGame(res);
-        this.nodes = validNodes;
-      })
-      .catch((e) => {
-        this.nodes = [];
-        console.error(e);
-        // this.nodes.push(this.trustedNodeAddress);
-      });
+  private getListOfAllNodes(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      fetch(this.trustedNodeAddress + "/nodes")
+        .then((res) => res.json())
+        .then(async (res) => {
+          const validNodes = await this.getNodesRunningAttentionGame(res);
+          this.nodes = validNodes;
+          resolve();
+          // v =validNodes
+        })
+        .catch((e) => {
+          this.nodes = [];
+          console.error(e);
+          // this.nodes.push(this.trustedNodeAddress);
+        });
+    });
   }
 
   /**
@@ -91,15 +97,16 @@ export class PoRT {
     // }
     let headers = {};
     // headers['x-request-signature'] = JSON.parse(headers['x-request-signature']);
+    headers = await this.signPort(trxId);
     try {
-      headers = await this.signPort(trxId);
+      2;
     } catch (e) {
       headers = {};
+      console.log(e);
     }
     if (headers) {
       for (let i = 0; i < this.nodes.length; i++) {
-        console.log(this.nodes[i] + "/submit-port");
-        fetch(this.nodes[i] + `/attention/submit-port`, {
+        fetch(this.nodes[i] + `/attention/submit-ports`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -148,19 +155,25 @@ export class PoRT {
       if (response.status == 200) return response.data;
     }
     if (localStorage.getItem(this.walletLocation)) {
+      
+      
+      // console.log({
+      //   wallet: JSON.parse(localStorage.getItem(this.walletLocation)),
+      // });
       const wallet: BoxKeyPair = nacl.sign.keyPair.fromSecretKey(
         new Uint8Array(
-          //eslint-disable-next-line
-          JSON.parse(localStorage.getItem(this.walletLocation) as any)
+          JSON.parse(localStorage.getItem(this.walletLocation) as string)
         )
       );
       Ports = await this.generatePoRTHeaders(wallet, trxId);
       return Ports;
     } else {
       try {
-        const wallet: BoxKeyPair = nacl.box.keyPair();
-        localStorage.setItem("portWallet", JSON.stringify(wallet.secretKey));
-        console.log("portWallet", JSON.stringify(wallet.secretKey));
+        const wallet: BoxKeyPair = nacl.sign.keyPair();
+        localStorage.setItem(
+          this.walletLocation,
+          JSON.stringify(Array.from(wallet.secretKey))
+        );
         Ports = await this.generatePoRTHeaders(wallet, trxId);
         return Ports;
       } catch (e) {
@@ -190,10 +203,9 @@ export class PoRT {
         );
         payload.nonce++;
         signedMessage = nacl.sign(msg, wallet.secretKey);
-        const hash = sha256(signedMessage);
+        const hash = sha256(encodePublicKey(signedMessage));
         // console.log(hash);
         if (this.difficultyFunction(hash)) {
-          console.log(hash);
           break;
         }
         nonce++;
@@ -202,6 +214,7 @@ export class PoRT {
         signedMessage: encodePublicKey(signedMessage),
         publicKey: encodePublicKey(wallet.publicKey),
       };
+      // console.log(data);
       return data;
     } catch (e) {
       console.log(e);
@@ -213,13 +226,13 @@ export class PoRT {
   }
 
   difficultyFunction(hash: string) {
-    return hash.startsWith("00") || hash.startsWith("01");
+    return hash.startsWith("00") 
   }
 }
 
 function encodePublicKey(publicKey) {
   return bs58.encode(
-    Buffer.from(publicKey.buffer, publicKey.byteOffset, publicKey.byteLength)
+    publicKey
   );
 }
 function decodePublicKey(publicKey) {

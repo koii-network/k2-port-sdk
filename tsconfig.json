@@ -11,7 +11,8 @@
       "module": "commonJs",
       "outDir": "build",
       "strictPropertyInitialization": false,
-      "noImplicitAny": false
+      "noImplicitAny": false,
+      "sourceMap": true
 
     },
     "include": ["src/*"],
