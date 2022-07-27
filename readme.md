@@ -3,7 +3,7 @@
 KOII port is a way to track the attention that assets on KOII network gets and to earn rewards based on that attention
 ## Introduction:
 
-This package will sign proofs of real traffic via Finne wallet and submit to KOII Nodes and in returns your user can earn some KOII as a token of appreciation for sharing content hosted on KOII network.
+This package will sign proofs of real traffic via Finnie wallet and submit to KOII Nodes and in returns your user can earn some KOII as a token of appreciation for sharing content hosted on KOII network.
 
 ## How to use:
 
