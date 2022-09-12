@@ -51,7 +51,7 @@ This function accepts an optional options object which for now includes followin
 **description**: On `connectWallet()` when Finne is rejected it saves the rejection status in `localStorage` and next time you call connect if the `rejectedStatus` is `true` it will not connect instead fallback to **anonymous** PoRT submission. So provide this flag as `true` if you want to override this rejection status.
  <br /> -->
 ### **`PropagatePoRT()`** <br />
-This function is the core of this SDK. It attempts to send **Proofs of Real Traffic** to KOII network for given transaction Id. First it tries Finne wallet and if permissions are available to SignPoRTs it will sign PoRTs else it will generate a new arweave wallet in and store it in your browser and Sign PoRTs with them.
+This function is the core of this SDK. It attempts to send **Proofs of Real Traffic** to KOII network for given transaction Id. First it tries Finne wallet and if permissions are available to SignPoRTs it will sign PoRTs else it will generate a new Koii wallet in and store it in your browser and Sign PoRTs with them.
  <br />
 ##### Arguments
 
