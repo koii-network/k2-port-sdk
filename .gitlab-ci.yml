@@ -18,13 +18,13 @@ build:
     - apt-get install awscli -y
     - aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
     - aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-    - aws configure set region $AWS_DEFAULT_REGION
+    - aws configure set region us-east-1
 
   script:
     - npm install
     - npm install typescript
     - npm run build
     - ls -ltr
-    - ls -ltr build/bundle/    
-    - aws s3 cp build/bundle/bundle.js.gz s3://thanos-koii/test --recursive
-    - aws s3 cp build/bundle/bundle.js s3://thanos-koii/test --recursive  
+    - ls -ltr build/bundle/  
+    - aws s3 ls
+    - aws s3 cp ./build/bundle/ s3://thanos-koii/test1 --recursive 
