@@ -33,7 +33,7 @@ export class PoRT {
 
   constructor(initParams: InitParams = {}) {
     this.trustedNodeAddress =
-      initParams.trustedNodeAddress || "https://k2-task-testnet.koii.live/";
+      initParams.trustedNodeAddress || "https://k2-task-testnet.koii.live";
     console.log(this);
     this.propagationCount = initParams.propagationCount || 3;
     this.namespaceId = initParams.namespaceId || "Attention";
@@ -106,7 +106,7 @@ export class PoRT {
     }
     if (headers) {
       for (let i = 0; i < this.nodes.length; i++) {
-        fetch(this.nodes[i] + `/attention/submit-ports`, {
+        fetch(this.nodes[i] + `/task/attention/submit-ports`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -133,7 +133,7 @@ export class PoRT {
   }
   checkNodeAttentionGame(node: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      fetch(`${node}/attention`)
+      fetch(`${node}/attention/id`)
         .then((res) => {
           if (res.status !== 200) return resolve(false);
           return resolve(true);
