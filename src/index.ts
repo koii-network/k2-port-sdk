@@ -33,7 +33,7 @@ export class PoRT {
 
   constructor(initParams: InitParams = {}) {
     this.trustedNodeAddress =
-      initParams.trustedNodeAddress || "https://k2-task-testnet.koii.live";
+      initParams.trustedNodeAddress || "https://k2-tasknet.koii.live";
     console.log(this);
     this.propagationCount = initParams.propagationCount || 3;
     this.namespaceId = initParams.namespaceId || "Attention";
@@ -53,8 +53,14 @@ export class PoRT {
       fetch(this.trustedNodeAddress + "/nodes")
         .then((res) => res.json())
         .then(async (res) => {
+          res.push({
+            data: {
+              url: this.trustedNodeAddress
+            }
+          })
           const validNodes = await this.getNodesRunningAttentionGame(res);
           this.nodes = validNodes;
+          console.log(validNodes);
           resolve();
           // v =validNodes
         })
@@ -106,7 +112,7 @@ export class PoRT {
     }
     if (headers) {
       for (let i = 0; i < this.nodes.length; i++) {
-        fetch(this.nodes[i] + `/task/attention/submit-ports`, {
+        fetch(this.nodes[i] + `/attention/submit-ports`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -133,7 +139,11 @@ export class PoRT {
   }
   checkNodeAttentionGame(node: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      fetch(`${node}/attention/id`)
+      console.log(node);
+      if (node.includes("localhost")|| node.includes("<")) {
+        return resolve(false)
+      }
+      fetch(`${node}/attention/`)
         .then((res) => {
           if (res.status !== 200) return resolve(false);
           return resolve(true);
@@ -155,8 +165,8 @@ export class PoRT {
       if (response.status == 200) return response.data;
     }
     if (localStorage.getItem(this.walletLocation)) {
-      
-      
+
+
       // console.log({
       //   wallet: JSON.parse(localStorage.getItem(this.walletLocation)),
       // });
@@ -197,7 +207,7 @@ export class PoRT {
         epoch: -1,
       };
       let signedMessage: Uint8Array = new Uint8Array();
-      for (;;) {
+      for (; ;) {
         const msg: Uint8Array = new TextEncoder().encode(
           JSON.stringify(payload)
         );
@@ -226,7 +236,7 @@ export class PoRT {
   }
 
   difficultyFunction(hash: string) {
-    return hash.startsWith("00") 
+    return hash.startsWith("00")
   }
 }
 
