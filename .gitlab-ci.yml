@@ -27,4 +27,4 @@ build:
     - ls -ltr
     - ls -ltr build/bundle/  
     - aws s3 ls
-    - aws s3 cp ./build/bundle/ s3://thanos-koii/test1 --recursive 
+    - aws s3 cp ./build/bundle/ s3://cdn.koii.live/build --recursive 
