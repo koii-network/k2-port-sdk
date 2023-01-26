@@ -33,6 +33,7 @@ build:
     - cd ../../
     - >
       sed -n 's/.*"version": "\(.*\)",.*/\1/p' package.json > version.txt
-    - echo $(cat version.txt) > package_$(cat version.txt).js
+    - cp  version.txt build/bundle/
+    - cd build/bundle/  
+    - mv bundle.js package_$(cat version.txt).js      
     - aws s3 cp package_$(cat version.txt).js s3://cdn.koii.live/port-$(cat version.txt).js    
-#    - aws s3 cp ./build/bundle/ s3://cdn.koii.live/build --recursive 
