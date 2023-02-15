@@ -7,6 +7,7 @@ workflow:
 
 stages:
   - build
+  - deploy
 
 image: node:latest
 build:
@@ -36,3 +37,11 @@ build:
     - cp  version.txt build/bundle/
     - cd build/bundle/  
     - aws s3 cp bundle.js s3://cdn.koii.live/port-$(cat version.txt).js 
+
+deploy:
+  stage: deploy
+  script:
+    - npm install
+    - npm run build
+    - echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > .npmrc
+    - npm publish -f --access public
