@@ -44,7 +44,7 @@ This function is the core of this SDK. It attempts to send **Proofs of Real Traf
 ##### Arguments
 
 This function accepts following arguments
-**`trxId`** <br />
+**`Id`** <br />
 **Type**: `String` <br />
 **Required**: `true` <br />
 **description**: This must be a valid  Id for which you want to send Proofs
