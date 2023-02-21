@@ -80,15 +80,15 @@ export class PoRT {
    */
   /**
    *
-   * @description This function submits PoRT to KOII network for given transaction ID
-   * @param {Array} trxId - Transaction Id for which to send PoRT of.
+   * @description This function submits PoRT to KOII network for given ID
+   * @param {Array} id -  Id for which to send PoRT of.
    */
-  async propagatePoRT(trxId) {
+  async propagatePoRT(id) {
     await this.initialize;
-    // if (!this.trxRegex.test(trxId))
+    // if (!this.trxRegex.test(id))
     //   return {
     //     status: 400,
-    //     message: 'Invalid TransactionId',
+    //     message: 'Invalid Id',
     //   };
     // if (this.connectionWait)
     //   try {
@@ -103,7 +103,7 @@ export class PoRT {
     // }
     let headers = {};
     // headers['x-request-signature'] = JSON.parse(headers['x-request-signature']);
-    headers = await this.signPort(trxId);
+    headers = await this.signPort(id);
     try {
       2;
     } catch (e) {
@@ -154,12 +154,12 @@ export class PoRT {
         });
     });
   }
-  async signPort(trxId: string) {
+  async signPort(id: string) {
     await this.initialized;
     let Ports: PoRTData;
     if (window && window.koiiWallet && window.koiiWallet.signK2Port) {
       //TODO: Change this when we have ports are implemented in finnie
-      const response = await window.koiiWallet.signPort(trxId);
+      const response = await window.koiiWallet.signPort(id);
       Ports = response.data;
       console.log(`%c ${JSON.stringify(response)}`, "color: green");
       if (response.status == 200) return response.data;
@@ -175,7 +175,7 @@ export class PoRT {
           JSON.parse(localStorage.getItem(this.walletLocation) as string)
         )
       );
-      Ports = await this.generatePoRTHeaders(wallet, trxId);
+      Ports = await this.generatePoRTHeaders(wallet, id);
       return Ports;
     } else {
       try {
@@ -184,7 +184,7 @@ export class PoRT {
           this.walletLocation,
           JSON.stringify(Array.from(wallet.secretKey))
         );
-        Ports = await this.generatePoRTHeaders(wallet, trxId);
+        Ports = await this.generatePoRTHeaders(wallet, id);
         return Ports;
       } catch (e) {
         console.log(e);
