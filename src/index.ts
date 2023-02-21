@@ -81,7 +81,7 @@ export class PoRT {
   /**
    *
    * @description This function submits PoRT to KOII network for given transaction ID
-   * @param {Array} trxId - Transaction Id for which tom send PoRT of.
+   * @param {Array} trxId - Transaction Id for which to send PoRT of.
    */
   async propagatePoRT(trxId) {
     await this.initialize;
