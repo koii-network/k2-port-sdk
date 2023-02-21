@@ -1,6 +1,6 @@
 # KOII Proof of Real traffic(PoRTs)
 ## What is Proof of Real Traffic:
-Proof of Real Traffic is a cryptographic primitive including a signature from a specific consumer wallet. Each viewer creates a signature and then hashes over it to find a PoRT with a specific difficulty factor (link to BTC difficulty) generating a PoW which represents the content and viewer uniquely. 
+Proof of Real Traffic is a cryptographic primitive including a signature from a specific consumer wallet. Each viewer creates a signature and then hashes over it to find a PoRT with a specific [difficulty factor](https://btc.com/stats/diff) generating a PoW which represents the content and viewer uniquely. 
 
 ## Introduction:
 
@@ -39,7 +39,7 @@ let portAPI = new port.PoRT({
 Now here's the list of function this SDK exposes:
 
 ### **`PropagatePoRT()`** <br />
-This function is the core of this SDK. It attempts to send **Proofs of Real Traffic** to Koii network for given transaction Id. Transaction Id could be your NFT id, wallet public key, CID from IPFS and your website url. First it tries Finne wallet and if permissions are available to SignPoRTs it will sign PoRTs else it will generate a new Koii wallet in and store it in your browser and Sign PoRTs with them.
+This function is the core of this SDK. It attempts to send **Proofs of Real Traffic** to Koii network for given Id. Id could be your NFT id, wallet public key, CID from IPFS and your website url. First it tries Finne wallet and if permissions are available to SignPoRTs it will sign PoRTs else it will generate a new Koii wallet in and store it in your browser and Sign PoRTs with them.
  <br />
 ##### Arguments
 
@@ -47,7 +47,7 @@ This function accepts following arguments
 **`trxId`** <br />
 **Type**: `String` <br />
 **Required**: `true` <br />
-**description**: This must be a valid Arweave transaction Id for which you want to send Proofs
+**description**: This must be a valid  Id for which you want to send Proofs
 
 ### **`ClearFinneRejection()`** <br />
 On `connectWallet()` when Finne is rejected it saves the rejection status in `localStorage` and next time you call connect if the `rejectedStatus` is `true` it will not connect to Finne instead fallback to **anonymous** PoRT submission. So to reset the rejection status use this function.
