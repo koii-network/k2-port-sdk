@@ -50,7 +50,7 @@ export class PoRT {
 
   private getListOfAllNodes(): Promise<void> {
     return new Promise((resolve, reject) => {
-      fetch(this.trustedNodeAddress + "/nodes")
+      fetch(this.trustedNodeAddress + "/nodes/Attention22222222222222222222222222222222222")
         .then((res) => res.json())
         .then(async (res) => {
           res.push({
@@ -143,7 +143,7 @@ export class PoRT {
       if (node.includes("localhost")|| node.includes("<")) {
         return resolve(false)
       }
-      fetch(`${node}/attention/`)
+      fetch(`${node}/attention/id`)
         .then((res) => {
           if (res.status !== 200) return resolve(false);
           return resolve(true);
