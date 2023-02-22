@@ -1,9 +1,10 @@
 # KOII Proof of Real traffic(PoRTs)
-## What is KOII PoRT:
-KOII port is a way to track the attention that assets on KOII network gets and to earn rewards based on that attention
+## What is Proof of Real Traffic:
+Proof of Real Traffic is a cryptographic primitive including a signature from a specific consumer wallet. Each viewer creates a signature and then hashes over it to find a PoRT with a specific [difficulty factor](https://btc.com/stats/diff) generating a PoW which represents the content and viewer uniquely. 
+
 ## Introduction:
 
-This package will sign proofs of real traffic via Finnie wallet and submit to KOII Nodes and in returns your user can earn some KOII as a token of appreciation for sharing content hosted on KOII network.
+This package will sign proofs of real traffic via Finnie wallet and submit to Koii Task Nodes and in returns your user can earn some KOII as a token of appreciation for sharing content hosted on Koii Network.
 
 ## How to use:
 
@@ -21,17 +22,15 @@ Then in your `index.html` file add
 or 
 `<script src="https://cdn.koii.live/port-latest.js"></script>`
 
-**Replace {{Version}} with a correct version from release`**
-
-**Note:CDN Coming soon!!**
-
 ## SDK Documentation
 
 First you have to initialize the PoRT class:
 
 ```js
-port = new PoRT({
-  trustedNodeAddress: 'https://mainnet.koii.live', //Address of KOII mainnet
+import * as port from "@_koii/k2-port"
+
+let portAPI = new port.PoRT({
+  trustedNodeAddress: 'https://k2-tasknet.koii.live', //Address of KOII mainnet
   node: 5, //maximum number of nodes to send PoRTs to.
   connectionWait: true, // this parameters waits for Finne to be connected
 });
@@ -39,40 +38,58 @@ port = new PoRT({
 
 Now here's the list of function this SDK exposes:
 
-<!-- ### **`ConnectWallet()`**
-This function is optional. It attempts to connect to Finne wallet and get permissions to Sign PoRTs you can also use `koiiWallet.connect()` instead of this this function.
-
-##### Arguments
-
-This function accepts an optional options object which for now includes following options.
-
-**`ignoreRejection`** <br />
-**Type**: `Boolean` <br />
-**description**: On `connectWallet()` when Finne is rejected it saves the rejection status in `localStorage` and next time you call connect if the `rejectedStatus` is `true` it will not connect instead fallback to **anonymous** PoRT submission. So provide this flag as `true` if you want to override this rejection status.
- <br /> -->
 ### **`PropagatePoRT()`** <br />
-This function is the core of this SDK. It attempts to send **Proofs of Real Traffic** to KOII network for given transaction Id. First it tries Finne wallet and if permissions are available to SignPoRTs it will sign PoRTs else it will generate a new Koii wallet in and store it in your browser and Sign PoRTs with them.
+This function is the core of this SDK. It attempts to send **Proofs of Real Traffic** to Koii network for given Id. Id could be your NFT id, wallet public key, CID from IPFS and your website url. First it tries Finne wallet and if permissions are available to SignPoRTs it will sign PoRTs else it will generate a new Koii wallet in and store it in your browser and Sign PoRTs with them.
  <br />
 ##### Arguments
 
 This function accepts following arguments
-**`trxId`** <br />
+**`Id`** <br />
 **Type**: `String` <br />
 **Required**: `true` <br />
-**description**: This must be a valid Arweave transaction Id for which you want to send Proofs
+**description**: This must be a valid  Id for which you want to send Proofs
 
 ### **`ClearFinneRejection()`** <br />
 On `connectWallet()` when Finne is rejected it saves the rejection status in `localStorage` and next time you call connect if the `rejectedStatus` is `true` it will not connect to Finne instead fallback to **anonymous** PoRT submission. So to reset the rejection status use this function.
  <br />
 ## Example
-
+For your **NFT id** on Arweave:
 ```js
-portAPI = new port.PoRT({
-  trustedNodeAddress: 'https://mainnet.koii.live',
-  node: 5,
-  connectionWait: false,
+import * as port from "@_koii/k2-port"
+
+let portAPI = new port.PoRT({
+  trustedNodeAddress: 'https://k2-tasknet.koii.live', //Address of KOII mainnet
+  node: 5, //maximum number of nodes to send PoRTs to.
+  connectionWait: true, // this parameters waits for Finne to be connected
 });
 
-// portAPI.connectWallet()
-portAPI.propagatePoRT('TI6x7I6wzh2VQhT5qXEFRWQxX2zAj8zGdcadCYn8580')
+//portAPI.propagatePoRT('TI6x7I6wzh2VQhT5qXEFRWQxX2zAj8zGdcadCYn8580')
+portAPI.propagatePoRT('<Your NFT id on Arweave>') // NFT id on Arweave
 ```
+
+For your **Website**:
+```js
+import * as port from "@_koii/k2-port"
+
+let portAPI = new port.PoRT({
+  trustedNodeAddress: 'https://k2-tasknet.koii.live', //Address of KOII mainnet
+  node: 5, //maximum number of nodes to send PoRTs to.
+  connectionWait: true, // this parameters waits for Finne to be connected
+});
+
+// portAPI.propagatePoRT('https://www.koii.network/')
+portAPI.propagatePoRT('<Your website url>') // Your webiste url
+```
+
+For your **CID from IPFS**:
+```js
+import * as port from "@_koii/k2-port"
+
+let portAPI = new port.PoRT({
+  trustedNodeAddress: 'https://k2-tasknet.koii.live', //Address of KOII mainnet
+  node: 5, //maximum number of nodes to send PoRTs to.
+  connectionWait: true, // this parameters waits for Finne to be connected
+});
+
+// portAPI.propagatePoRT('bafybeiae5xyoekitp23qiuedcxzjtakh2a2dky5aieajp7qsnwdanvqjri')
+portAPI.propagatePoRT('<Your content CID>') // Your content CID
