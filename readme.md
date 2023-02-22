@@ -67,20 +67,6 @@ let portAPI = new port.PoRT({
 portAPI.propagatePoRT('<Your NFT id on Arweave>') // NFT id on Arweave
 ```
 
-For your **Wallet Address**:
-```js
-import * as port from "@_koii/k2-port"
-
-let portAPI = new port.PoRT({
-  trustedNodeAddress: 'https://k2-tasknet.koii.live', //Address of KOII mainnet
-  node: 5, //maximum number of nodes to send PoRTs to.
-  connectionWait: true, // this parameters waits for Finne to be connected
-});
-
-//portAPI.propagatePoRT('rxTOQUOzS5gzYX6mWsbwhuiGFurdXsJR0w2_Xozye1M')
-portAPI.propagatePoRT('<Your wallet public key>') // wallet address
-```
-
 For your **Website**:
 ```js
 import * as port from "@_koii/k2-port"
